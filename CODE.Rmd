@@ -1,0 +1,418 @@
+Analysis of FDA-Regulated Industry Audits
+========================================================
+install.packages("gridExtra")
+install.packages("dplyr")
+library(gridExtra)
+library(dplyr)
+```{r}
+setwd("C:/Users/ksiro/Documents/GitHub/FDA-Regulated Industry Audits")
+getdata <- read.csv("GXP.csv",sep=",",header=TRUE)
+df <- getdata[1:96,c(2,3,6,7,8,9)]
+```
+
+```{r}
+a1<- table(as.character(df[,1]))
+a2 <- table(as.character(df[,2]))
+a3 <- table(as.character(df[,3]))
+a4 <- table(as.character(df[,4]))
+a5 <- table(as.character(df[,5]))
+a6 <- table(as.character(df[,6]))
+```
+
+Good_X_Practices
+
+(A)
+```{r}
+library(gridExtra)
+tb1<- data.frame(a1)
+colnames(tb1)<- c("Audit status","Freq")
+grid.table(tb1)
+
+percent <- (100*tb1[,2])/(sum(tb1[,2]))
+percent<- round(percent,2)
+labels <- paste(percent,"%",sep="")
+pie(a1,labels=labels,main="Audit status by percent",col=unique(tb1[,1]))
+legend("topright", legend=tb1[,1],col=unique(tb1[,1]),pch=15)
+
+p1<- barplot(a1,col="chocolate",border="pink",cex.names=0.7,xpd=FALSE,xlab="Audit status",ylab="The count",main="Frequency chart for Audit status")
+text(p1, 0, round(a1, 1), pos=3,xpd=FALSE)
+```
+
+(B)
+```{r}
+tb2<- data.frame(a2)
+colnames(tb2)<- c("In or Out of US","Freq")
+grid.table(tb2)
+
+percent <- (100*tb2[,2])/(sum(tb2[,2]))
+percent<- round(percent,2)
+labels <- paste(percent,"%",sep="")
+pie(a2,labels=labels,main="In OR out of US by percent",col=unique(tb2[,1]))
+legend("topright", legend=tb2[,1],col=unique(tb2[,1]),pch=15)
+
+p2<- barplot(a2,col="pink",cex.names=0.7,border="green",xpd=FALSE,xlab="In or Out",ylab="The count",main="Frequency chart for: In US OR OUT OF US ")
+text(p2, 0, round(a2, 1), pos=3,xpd=FALSE)
+```
+
+(C)
+```{r}
+names(a3)<- c("Clinical","Distribution","Laboratory","Laboratory type 2","Manufacturing","Manufacturing type 2","Manufacturing and Distribution","Vigilance")
+
+tb3<- data.frame(a3)
+
+colnames(tb3)<- c("AREA OF AUDIT ","Freq")
+grid.table(tb3)
+
+percent <- (100*tb3[,2])/(sum(tb3[,2]))
+percent<- round(percent,2)
+labels <- paste(percent,"%",sep="")
+
+pie(a3,labels=labels,main="Area of audit by percent",col=unique(tb3[,1]),cex=0.8)
+legend(.6,1, legend=tb3[,1],col=unique(tb3[,1]),pch=15,cex=.7)
+
+
+
+p3<- barplot(a3,col=tb3[,1],cex.names=0.7,cex.axis=.8,border="green",xpd=FALSE,xlab="Area",ylab="The count",main="Frequency chart for Area",names.arg=FALSE)
+text(p3, 0, round(a3, 1), pos=3,xpd=FALSE)
+legend(6.3,34, legend=tb3[,1],col=unique(tb3[,1]),pch=15,cex=0.7)
+```
+
+(D)
+```{r}
+tb4<- data.frame(a4)
+colnames(tb4)<- c("TYPE OF AUDIT","Freq")
+grid.table(tb4)
+
+percent <- (100*tb4[,2])/(sum(tb4[,2]))
+percent<- round(percent,2)
+labels <- paste(percent,"%",sep="")
+pie(a4,labels=labels,main="Type of audit by percent",col=unique(tb4[,1]))
+legend("topright", legend=tb4[,1],col=unique(tb4[,1]),pch=15)
+
+p4<- barplot(a4,col="red",cex.names=0.7,border="green",xpd=FALSE,xlab="Type of audit",ylab="The count",main="Frequency chart for Audit type")
+text(p4, 0, round(a4, 1), pos=3,xpd=FALSE)
+```
+  
+
+(E)
+```{r}
+tb5<- data.frame(a5)
+colnames(tb5)<- c("METHOD USED","Freq")
+grid.table(tb5)
+
+percent <- (100*tb5[,2])/(sum(tb5[,2]))
+percent<- round(percent,2)
+labels <- paste(percent,"%",sep="")
+pie(a5,labels=labels,main="Method used by percent",col=unique(tb5[,1]))
+legend(-1.3,1, legend=tb5[,1],col=unique(tb5[,1]),pch=15,cex=.70)
+
+p5<- barplot(a5,col="orange",border="green",cex.names=0.7,xpd=FALSE,xlab="Method used",ylab="The count",main="Frequency chart for Audit Method")
+text(p5, 0, round(a5, 1), pos=3,xpd=FALSE)
+```
+
+
+
+(F)
+```{r}
+tb6<- data.frame(a6)
+colnames(tb6)<- c("PROPOSED QUARTER","Freq")
+grid.table(tb6)
+
+percent <- (100*tb6[,2])/(sum(tb6[,2]))
+percent<- round(percent,2)
+labels <- paste(percent,"%",sep="")
+pie(a6,labels=labels,main="Quarter by percent",col=unique(tb6[,1]))
+legend("topright", legend=tb6[,1],col=unique(tb6[,1]),pch=15)
+
+p6<- barplot(a6,col="purple",border="green",xpd=FALSE,cex.names=0.7,xlab="Proposed quarter",ylab="The count",main="Frequency chart for Quarter")
+text(p6, 0, round(a6, 1), pos=3,xpd=FALSE)
+
+```
+
+
+
+
+More on GxP
+
+```{r}
+library(dplyr)
+scope <- df %>% filter(Audit.Status=="Not In Scope") %>% group_by(In.USA.or.OUS) %>% summarise(count=n())
+scope<- data.frame(scope)
+pie(scope[,2],col=unique(scope[,1]),labels=c("50%","50%"),main="Audits that are out of scope (US or OUS)?")
+legend(-1,1,legend=scope[,1],col=unique(scope[,1]),pch=19)
+```
+
+```{r}
+getdata <- read.csv("GXP.csv",sep=",",header=TRUE)
+df <- getdata[1:96,c(2,3,6,7,8,9)]
+library(dplyr)
+us <- df %>% filter(In.USA.or.OUS=="USA") %>% group_by(Audit.Type) %>% summarise(count=n())
+us <- data.frame(us)
+percent <- round((100*us[,2])/(sum(us[,2])),2)
+labels <- paste(percent,"%",sep="")
+pie(us[,2],labels=labels,main="Types within US",col=unique(us[,1]))
+legend(-1.2,1,legend=us[,1],col=unique(us[,1]),pch=19)
+```
+
+```{r}
+library(dplyr)
+manf <- df %>% filter(GxP.Area=="GMP") %>% group_by(Audit.Status) %>% summarise(count=n())
+manf <- data.frame(manf)
+percent= round((100*manf[,2])/(sum(manf[,2])),2)
+labels <- paste(percent,"%",sep="")
+pie(manf[,2],col=unique(manf[,1]),labels=labels,main="Manufacturing practices and their Status")
+legend(-1,1, legend=manf[,1],col=manf[,1],pch=18)
+```
+
+
+
+CSQA Analysis
+
+```{r}
+getdata2 <- read.csv("CSQA.csv",sep=",",header=TRUE)
+```
+
+```{r}
+df2 <- getdata2[,c(3,4,7,8,9,10)]
+a1<- table(as.character(df2[,1]))
+a2 <- table(as.character(df2[,2]))
+a3 <- table(as.character(df2[,3]))
+a4 <- table(as.character(df2[,4]))
+a5 <- table(as.character(df2[,5]))
+a6 <- table(as.character(df2[,6]))
+```
+
+```{r}
+library(gridExtra)
+```
+
+```{r}
+td1<- data.frame(a1)
+colnames(td1)<- c("Audit status","Freq")
+grid.table(td1)
+```
+
+
+```{r}
+td2<- data.frame(a2)
+colnames(td2)<- c("In or Out of US","Freq")
+grid.table(td2)
+```
+
+```{r}
+td3<- data.frame(a3)
+colnames(td3)<- c("AREA OF AUDIT ","Freq")
+grid.table(td3)
+```
+
+```{r}
+tb4<- data.frame(a4)
+colnames(tb4)<- c("TYPE OF AUDIT","Freq")
+grid.table(tb4)
+```
+
+```{r}
+tb5<- data.frame(a5)
+colnames(tb5)<- c("METHOD USED","Freq")
+grid.table(tb5)
+```
+
+```{r}
+tb6<- data.frame(a6)
+colnames(tb6)<- c("PROPOSED QUARTER","Freq")
+grid.table(tb6)
+```
+
+
+
+
+
+GxP TIME ANALYSIS BEGINS:
+
+```{r}
+date_1<- getdata[,c(14,15)]
+intake<- as.character(date_1[,1])
+sent <- as.character(date_1[,2])
+intake <- as.Date(intake,format = "%m/%d/%Y")
+sent <- as.Date(sent,format = "%m/%d/%Y")
+Days_Intake_QSent <- sent[1:100] - intake[1:100]
+x<- data.frame(Days_Intake_QSent)
+mean_1 <- mean(Days_Intake_QSent,na.rm=TRUE)
+median_1<- median(Days_Intake_QSent,na.rm=TRUE)
+print(paste("Mean is:",round(mean_1,2), "and Median is:",median_1))
+```
+
+```{r}
+date_2 <- getdata[,c(15,16)]
+sent <- as.character(date_2[,1])
+received <- as.character(date_2[,2])
+sent <- as.Date(sent,format = "%m/%d/%Y")
+received <- as.Date(received,format = "%m/%d/%Y")
+Days_QSent_QReceived <- received[1:100] - sent[1:100]
+x<-data.frame(Days_QSent_QReceived)
+mean_2 <- mean(Days_QSent_QReceived,na.rm=TRUE)
+median_2<- median(Days_QSent_QReceived,na.rm=TRUE)
+print(paste("Mean is:",round(mean_2,2), "and Median is:",median_2)) 
+```
+
+Result 2:It takes around a month for audit report to reach the office for analysis
+
+```{r}
+date_3 <- getdata[,c(17,18)]
+scheduled <- as.character(date_3[,1])
+actual_start <- as.character(date_3[,2])
+scheduled <- as.Date(scheduled,format = "%m/%d/%Y")
+actual_start <- as.Date(actual_start,format = "%m/%d/%Y")
+Days_AUDIT_scheduled_vs_AUDIT_actual <- actual_start[1:100] - scheduled[1:100]
+x<-data.frame(Days_AUDIT_scheduled_vs_AUDIT_actual)
+mean_3<- mean(Days_AUDIT_scheduled_vs_AUDIT_actual,na.rm=TRUE)
+median_3<- median(Days_AUDIT_scheduled_vs_AUDIT_actual,na.rm=TRUE)
+print(paste("Mean is:",round(mean_3,2), "and Median is:",median_3))
+```
+Result 3: On average, the autiding starts very late in comparision to its schedule.
+
+```{r}
+date_4 <- getdata[,c(18,19)]
+start <- as.character(date_4[,1])
+end <- as.character(date_4[,2])
+start <- as.Date(start,format = "%m/%d/%Y")
+end <- as.Date(end,format = "%m/%d/%Y")
+Days_StartDate_EndDate <- end[1:100] - start[1:100]
+x<-data.frame(Days_StartDate_EndDate)
+mean_4<- mean(Days_StartDate_EndDate,na.rm=TRUE)
+median_4<- median(Days_StartDate_EndDate,na.rm=TRUE)
+print(paste("Mean is:",round(mean_4,2), "and Median is:",median_4))
+```
+Result 4:Takes 1 day on average to complete audit
+
+```{r}
+date_5 <- getdata[,c(19,20)]
+end<- as.character(date_5[,1])
+audit_due <- as.character(date_5[,2])
+end <- as.Date(end,format = "%m/%d/%Y")
+audit_due <- as.Date(audit_due,format = "%m/%d/%Y")
+Days_AuditEnd_FinalReportDue <- audit_due[1:100] - end[1:100]
+x<-data.frame(Days_AuditEnd_FinalReportDue)
+mean_5<- mean(Days_AuditEnd_FinalReportDue,na.rm=TRUE)
+median_5<- median(Days_AuditEnd_FinalReportDue,na.rm=TRUE)
+print(paste("Mean is:",round(mean_5,2), "and Median is:",median_5))
+```
+Result 5: All audits completed well before final report needs to be submiitted. This way, enough time is given for documentation.
+
+
+```{r}
+date_6 <- getdata[,c(20,21)]
+audit_due <- as.character(date_6[,1])
+audit_completed <- as.character(date_6[,2])
+audit_due <- as.Date(audit_due,format = "%m/%d/%Y")
+audit_completed <- as.Date(audit_completed,format = "%m/%d/%Y")
+Days_FinalReportDue_CompletionDate <- audit_due[1:100] - audit_completed[1:100]
+x<-data.frame(Days_FinalReportDue_CompletionDate)
+mean_6 <- mean(Days_FinalReportDue_CompletionDate,na.rm=TRUE)
+median_6<- median(Days_FinalReportDue_CompletionDate,na.rm=TRUE)
+print(paste("Mean is:",round(mean_6,2), "and Median is:",median_6))
+```
+Result 6:Generally speaking, from the average we can say that most of the audits report were completed right on scheduled time. 
+
+
+
+
+
+CSQA TIME ANALYSIS BEGINS:
+
+```{r}
+getdata2 <- read.csv("CSQA.csv",sep=",",header=TRUE)
+```
+
+
+```{r}
+date_1<- getdata2[,c(14,15)]
+intake<- as.character(date_1[,1])
+sent <- as.character(date_1[,2])
+intake <- as.Date(intake,format = "%m/%d/%Y")
+sent <- as.Date(sent,format = "%m/%d/%Y")
+Days_Intake_QSent <- sent[1:12] - intake[1:12]
+x<- data.frame(Days_Intake_QSent)
+mean_1 <- mean(Days_Intake_QSent,na.rm=TRUE)
+median_1<- median(Days_Intake_QSent,na.rm=TRUE)
+print(paste("Mean is:",round(mean_1,2), "and Median is:",median_1))
+```
+
+
+
+```{r}
+date_2 <- getdata2[,c(15,16)]
+sent <- as.character(date_2[,1])
+received <- as.character(date_2[,2])
+sent <- as.Date(sent,format = "%m/%d/%Y")
+received <- as.Date(received,format = "%m/%d/%Y")
+Days_QSent_QReceived <- received[1:12] - sent[1:12]
+x<-data.frame(Days_QSent_QReceived)
+mean_2 <- mean(Days_QSent_QReceived,na.rm=TRUE)
+median_2<- median(Days_QSent_QReceived,na.rm=TRUE)
+print(paste("Mean is:",round(mean_2,2), "and Median is:",median_2)) 
+```
+
+Result 2: It takes less time for CSQA audits to reach to reach final office for analysis in comparision with Gxp.
+
+```{r}
+date_3 <- getdata2[,c(17,18)]
+scheduled <- as.character(date_3[,1])
+actual_start <- as.character(date_3[,2])
+scheduled <- as.Date(scheduled,format = "%m/%d/%Y")
+actual_start <- as.Date(actual_start,format = "%m/%d/%Y")
+Days_AUDIT_scheduled_vs_AUDIT_actual <- actual_start[1:12] - scheduled[1:12]
+x<-data.frame(Days_AUDIT_scheduled_vs_AUDIT_actual)
+mean_3<- mean(Days_AUDIT_scheduled_vs_AUDIT_actual,na.rm=TRUE)
+median_3<- median(Days_AUDIT_scheduled_vs_AUDIT_actual,na.rm=TRUE)
+print(paste("Mean is:",round(mean_3,2), "and Median is:",median_3))
+```
+
+Result 3: Though the auditing starts late than its scheduled date, but it's still better than GxP dataset.
+
+```{r}
+date_4 <- getdata2[,c(18,19)]
+start <- as.character(date_4[,1])
+end <- as.character(date_4[,2])
+start <- as.Date(start,format = "%m/%d/%Y")
+end <- as.Date(end,format = "%m/%d/%Y")
+Days_StartDate_EndDate <- end[1:12] - start[1:12]
+x<-data.frame(Days_StartDate_EndDate)
+mean_4<- mean(Days_StartDate_EndDate,na.rm=TRUE)
+median_4<- median(Days_StartDate_EndDate,na.rm=TRUE)
+print(paste("Mean is:",round(mean_4,2), "and Median is:",median_4))
+```
+
+Result 4: In some cases it takes even less than a day to get the audit completed.
+
+```{r}
+date_5 <- getdata2[,c(19,20)]
+end<- as.character(date_5[,1])
+audit_due <- as.character(date_5[,2])
+end <- as.Date(end,format = "%m/%d/%Y")
+audit_due <- as.Date(audit_due,format = "%m/%d/%Y")
+Days_AuditEnd_FinalReportDue <- audit_due[1:12] - end[1:12]
+x<-data.frame(Days_AuditEnd_FinalReportDue)
+mean_5<- mean(Days_AuditEnd_FinalReportDue,na.rm=TRUE)
+median_5<- median(Days_AuditEnd_FinalReportDue,na.rm=TRUE)
+print(paste("Mean is:",round(mean_5,2), "and Median is:",median_5))
+```
+
+Result 5: On average, much more time is given to reports of CSQA for documentaion than Gxp.
+
+
+```{r}
+date_6 <- getdata2[,c(22,23)]
+audit_debrief <- as.character(date_6[,1])
+audit_completed <- as.character(date_6[,2])
+audit_debrief <- as.Date(audit_debrief,format = "%m/%d/%Y")
+audit_completed <- as.Date(audit_completed,format = "%m/%d/%Y")
+Days_FinalReportDebrief_CompletionDate <- audit_completed[1:12] - audit_debrief[1:12]
+x<-data.frame(Days_FinalReportDebrief_CompletionDate)
+mean_6 <- mean(Days_FinalReportDebrief_CompletionDate,na.rm=TRUE)
+median_6<- median(Days_FinalReportDebrief_CompletionDate,na.rm=TRUE)
+print(paste("Mean is:",round(mean_6,2), "and Median is:",median_6))
+```
+
+Result 6: Because we do not have final report due date in CSQA dataset, I have calculated the difference between the audit completion date and the debrief date. Debrief date is the date when a report is concluded and finalized by eveyone in committe.
+
